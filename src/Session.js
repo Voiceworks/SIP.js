@@ -662,7 +662,6 @@ Session.prototype = {
       case SIP.C.INVITE:
         if(this.status === C.STATUS_CONFIRMED) {
           this.logger.log('re-INVITE received');
-          this.logger.log('re-INVITE received');
           // PATCH_actpass: freeSwitch is sending every 1' a re-INVITE on 1:1 conversations and phone calls (pstn)
           // - If it's a phone call (From pstn), replying 488 stops the re-invites from the server
           //   However, trying to send an OK ends up in a client 500
