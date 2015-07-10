@@ -653,7 +653,8 @@ Session.prototype = {
     switch (request.method) {
       case SIP.C.BYE:
         request.reply(200);
-        if(this.status === C.STATUS_CONFIRMED) {
+        // PATCH_status: C.STATUS_INVITE_SENT is added to resolve issue with ignored BYE Should be checked more!!!!
+        if(this.status === C.STATUS_CONFIRMED || this.status === C.STATUS_INVITE_SENT) {
           this.emit('bye', request);
           this.terminated(request, SIP.C.causes.BYE);
         }
