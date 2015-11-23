@@ -192,6 +192,17 @@ Session.prototype = {
 
     options.receiveResponse = function () {};
 
+    if (this.endCallCb) {
+          var self = this;
+          setTimeout(function () {
+                for (var i in self.ua.sessions) {
+                    if (self.ua.sessions[i].status === C.STATUS_CONFIRMED) {
+                        self.ua.sessions[i].close();
+                    }
+                }
+          }, 1000);
+      }
+
     return this.
       sendRequest(SIP.C.BYE, options).
       terminated();
@@ -653,10 +664,23 @@ Session.prototype = {
     switch (request.method) {
       case SIP.C.BYE:
         request.reply(200);
-        // PATCH_status: C.STATUS_INVITE_SENT is added to resolve issue with ignored BYE Should be checked more!!!!
-        if(this.status === C.STATUS_CONFIRMED || this.status === C.STATUS_INVITE_SENT) {
-          this.emit('bye', request);
-          this.terminated(request, SIP.C.causes.BYE);
+        if (this.endCallCb) {
+            var endCall = this.endCallCb(this);
+            var self = this;
+            this.terminated(request, SIP.C.causes.BYE, false);
+            this.emit('bye', request);
+            setTimeout(function () {
+                if (endCall) {
+                    for (var i in self.ua.sessions) {
+                        if (self.ua.sessions[i].status === C.STATUS_CONFIRMED) {
+                            self.ua.sessions[i].close();
+                        }
+                    }
+                }
+            }, 1000);
+        } else {
+            this.emit('bye', request);
+            this.terminated(request, SIP.C.causes.BYE);
         }
         break;
       case SIP.C.INVITE:
@@ -949,7 +973,10 @@ Session.prototype = {
   terminated: function(message, cause) {
     this.endTime = new Date();
 
-    this.close();
+    if (arguments[2] !== false) {
+        this.close();
+    }
+
     return this.emit('terminated', {
       message: message || null,
       cause: cause || null
