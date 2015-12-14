@@ -664,23 +664,25 @@ Session.prototype = {
     switch (request.method) {
       case SIP.C.BYE:
         request.reply(200);
-        if (this.endCallCb) {
-            var endCall = this.endCallCb(this);
-            var self = this;
-            this.terminated(request, SIP.C.causes.BYE, false);
-            this.emit('bye', request);
-            setTimeout(function () {
-                if (endCall) {
-                    for (var i in self.ua.sessions) {
-                        if (self.ua.sessions[i].status === C.STATUS_CONFIRMED) {
-                            self.ua.sessions[i].close();
+        if(this.status === C.STATUS_CONFIRMED || this.status === C.STATUS_INVITE_SENT) {
+            if (this.endCallCb) {
+                var endCall = this.endCallCb(this);
+                var self = this;
+                this.terminated(request, SIP.C.causes.BYE, false);
+                this.emit('bye', request);
+                setTimeout(function () {
+                    if (endCall) {
+                        for (var i in self.ua.sessions) {
+                            if (self.ua.sessions[i].status === C.STATUS_CONFIRMED) {
+                                self.ua.sessions[i].close();
+                            }
                         }
                     }
-                }
-            }, 1000);
-        } else {
-            this.emit('bye', request);
-            this.terminated(request, SIP.C.causes.BYE);
+                }, 1000);
+            } else {
+                this.emit('bye', request);
+                this.terminated(request, SIP.C.causes.BYE);
+            }
         }
         break;
       case SIP.C.INVITE:
@@ -1706,6 +1708,7 @@ InviteClientContext.prototype = {
   invite: function (options) {
     var self = this;
     options = options || {};
+    this.endCallCb = options.endCallCb;
 
     SIP.Utils.optionsOverride(options, 'media', 'mediaConstraints', true, this.logger, this.ua.configuration.media);
     this.mediaHint = options.media;
