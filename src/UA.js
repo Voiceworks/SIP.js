@@ -255,7 +255,7 @@ UA.prototype.invite = function(target, options) {
   var context = new SIP.InviteClientContext(this, target, options);
 
   if (this.isConnected()) {
-    context.invite({media: options.media});
+    context.invite({media: options.media, endCallCb: options.endCallCb});
   } else {
     this.once('connected', function() {
       context.invite({media: options.media});
