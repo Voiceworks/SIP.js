@@ -132,7 +132,7 @@ MediaStreamManager.prototype = Object.create(SIP.EventEmitter.prototype, {
   'release': {value: function release (stream) {
     var streamId = MediaStreamManager.streamId(stream);
     if (this.acquisitions[streamId] === false) {
-        if (SIP.Hacks.Firefox.isFireFox()) {
+        if (SIP.Hacks.Firefox.isFirefox()) {
             stream.stop();
         } else {
             stream.getTracks().forEach(function (track) {
