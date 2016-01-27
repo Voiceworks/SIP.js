@@ -832,6 +832,28 @@ Session.prototype = {
   },
 
   /**
+   * Send a SIP INFO message for the media platform to resend the keyframe
+   * @public
+   */
+  requestKeyFrame: function(options) {
+    options = options || {};
+
+    var
+        self = this,
+        body,
+        extraHeaders = (options.extraHeaders || []).slice();
+
+    extraHeaders.push('Content-Type: application/media_control+xml');
+
+    body = '<?xml version="1.0" encoding="utf-8"?><media_control><vc_primitive><to_encoder><picture_fast_update></picture_fast_update></to_encoder></vc_primitive></media_control>';
+
+    self.dialog.sendRequest(self, SIP.C.INFO, {
+      extraHeaders: extraHeaders,
+      body: body
+    });
+  },
+
+  /**
    * RFC3261 13.3.1.4
    * Response retransmissions cannot be accomplished by transaction layer
    *  since it is destroyed when receiving the first 2xx answer
