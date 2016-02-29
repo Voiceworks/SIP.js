@@ -477,7 +477,10 @@ var InviteServerTransaction = function(request, ua) {
 
   this.resendProvisionalTimer = null;
 
-  request.reply(100);
+  // PATCH_invite_server:
+  // Avoid to send back a "SIP/2.0 100 Trying" with no SDP
+  // After that "SIP/2.0 200 OK" is sent and FreeSwitch can have issues
+  //request.reply(100);
 
   this.initEvents(events);
 };
