@@ -1077,10 +1077,16 @@ InviteServerContext = function(ua, request) {
     return;
   }
 
-  //Initialize Media Session
-  this.mediaHandler = this.mediaHandlerFactory(this, {
-    RTCConstraints: {"optional": [{'DtlsSrtpKeyAgreement': 'true'}]}
-  });
+    //Initialize Media Session
+  if(SIP.Hacks.Firefox.isFirefox()) {
+    this.mediaHandler = this.mediaHandlerFactory(this, {
+      RTCConstraints: {'DtlsSrtpKeyAgreement': 'true'}
+    });
+  } else {
+    this.mediaHandler = this.mediaHandlerFactory(this, {
+      RTCConstraints: {"optional": [{'DtlsSrtpKeyAgreement': 'true'}]}
+    });
+  }
 
   if (this.mediaHandler && this.mediaHandler.getRemoteStreams) {
     this.getRemoteStreams = this.mediaHandler.getRemoteStreams.bind(this.mediaHandler);
