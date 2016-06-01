@@ -847,9 +847,10 @@ Session.prototype = {
 
     body = '<?xml version="1.0" encoding="utf-8"?><media_control><vc_primitive><to_encoder><picture_fast_update></picture_fast_update></to_encoder></vc_primitive></media_control>';
 
-    self.dialog.sendRequest(self, SIP.C.INFO, {
-      extraHeaders: extraHeaders,
-      body: body
+    this.sendRequest(SIP.C.INFO, {
+        extraHeaders: extraHeaders,
+        body: body,
+        receiveResponse: function() {}
     });
   },
 
