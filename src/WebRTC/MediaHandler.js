@@ -72,8 +72,10 @@ var MediaHandler = function(session, options) {
 
   this.peerConnection = new SIP.WebRTC.RTCPeerConnection({'iceServers': servers}, this.RTCConstraints);
 
-  this.peerConnection.onaddstream = function(e) {
-    self.logger.log('stream added: '+ e.stream.id);
+  this.peerConnection.ontrack = function(e) {
+    var stream = e.streams[0];
+
+    self.logger.log('stream added: '+ stream.id);
     self.render();
     self.emit('addStream', e);
   };
