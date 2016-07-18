@@ -697,7 +697,7 @@ Session.prototype = {
           }
           else{
             request.body = request.body.replace(new RegExp('a=setup:active', 'g'), 'a=setup:actpass');
-            //this.receiveReinvite(request);
+            this.receiveReinvite(request);
             request.reply(200, null, ['Contact: ' + this.contact], this.mediaHandler.peerConnection.localDescription.sdp);
           }
         }
@@ -847,10 +847,9 @@ Session.prototype = {
 
     body = '<?xml version="1.0" encoding="utf-8"?><media_control><vc_primitive><to_encoder><picture_fast_update></picture_fast_update></to_encoder></vc_primitive></media_control>';
 
-    this.sendRequest(SIP.C.INFO, {
-        extraHeaders: extraHeaders,
-        body: body,
-        receiveResponse: function() {}
+    self.dialog.sendRequest(self, SIP.C.INFO, {
+      extraHeaders: extraHeaders,
+      body: body
     });
   },
 

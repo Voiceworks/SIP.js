@@ -6,7 +6,8 @@ ServerContext = function (ua, request) {
       'progress',
       'accepted',
       'rejected',
-      'failed'
+      'failed',
+      'call_updated'
     ];
   this.ua = ua;
   this.logger = ua.getLogger('sip.servercontext');
